@@ -109,7 +109,7 @@ const getOrdersById = asyncHandler(async (req, res) => {
       "name email"
     );
     if (order) {
-      res.status(200).json({ order });
+      res.status(200).json(order);
     } else {
       res.status(404).send("Order not found");
     }
@@ -121,13 +121,27 @@ const getOrdersById = asyncHandler(async (req, res) => {
 /**
  * This function handles payment update.
  *
- * @route GET /kampala/orders/:id
+ * @route PUT /kampala/orders/:id
  * @access Private/Admin
  */
 
 const updateOrderToPaid = asyncHandler(async (req, res) => {
   try {
-    res.status(200).send("update order to paid");
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      order.isPaid=true;
+      order.paidAt=Date.now();
+      order.paymentResult={
+        id:req.body.id,
+        status:req.body.status,
+        update_time:req.body.update_time,
+        email_address:req.body.payer.email_address,
+      };
+      const updatedOrder= await order.save();
+      res.status(200).json(updatedOrder)
+    }else{
+      res.status(400).json(`error with payment`)
+    }
   } catch (error) {
     res.status(500).send("error occurred");
   }
@@ -135,7 +149,7 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
 
 /**
  * Updates the order status to "delivered".
- * @route GET /kampala/orders/:id/deliver
+ * @route PUT /kampala/orders/:id/deliver
  * @access Private/Admin
  */
 const updateOrderToDelivered = async (req, res) => {

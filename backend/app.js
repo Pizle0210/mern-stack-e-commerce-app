@@ -22,6 +22,10 @@ app.use(cors());
 app.use("/kampala/products", productRoute);
 app.use("/kampala/users", userRoute);
 app.use("/kampala/orders", orderRoute);
+
+app.get("/kampala/config/paypal", (req, res) =>
+  res.send({ clientId: process.env.PAYPAL_CLIENT_ID })
+);
 start(); //connect to database
 app.listen(port, () => {
   console.log(`server now running on ${port}`);
