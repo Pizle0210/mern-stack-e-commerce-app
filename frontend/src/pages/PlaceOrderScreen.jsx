@@ -8,7 +8,7 @@ import { useCreateOrderMutation } from "../slices/ordersApiSlice";
 import { clearCartItems } from "../slices/cartSlice";
 import Message from "../components/Message";
 
-export default function OrderScreen() {
+export default function PlaceOrderScreen() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
@@ -67,8 +67,8 @@ export default function OrderScreen() {
                 </Message>
               ) : (
                 <ListGroup variant="flush">
-                  {cart.cartItems.map((item) => (
-                    <ListGroup.Item key={item._id}>
+                  {cart.cartItems.map((item,index) => (
+                    <ListGroup.Item key={index}>
                       <Row>
                         <Col md={2}>
                           <img src={item.image} alt={item.name} />
@@ -76,7 +76,7 @@ export default function OrderScreen() {
                         <Col className="flex items-center">
                           <Link
                             className="underline hover:underline-offset-2"
-                            to={`/product/${item._id}`}
+                            to={`/product/${item.product}`}
                           >
                             {item.name}
                           </Link>

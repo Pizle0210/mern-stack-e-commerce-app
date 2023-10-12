@@ -11,6 +11,7 @@ export default defineConfig({
       "/kampala/products": "http://localhost:4000/",
       "/kampala/users": "http://localhost:4000/",
       "/kampala/orders": "http://localhost:4000/",
+      "/kampala/config/paypal": "http://localhost:4000/",
     },
   },
 });
