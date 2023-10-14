@@ -6,6 +6,7 @@ import { useLoginMutation } from "../slices/usersApiSlice";
 import { useEffect, useState } from "react";
 import { setCredentials } from "../slices/authSlice";
 import { Form } from "react-bootstrap";
+import Loader from "../components/Loader";
 
 export default function SignInPage() {
   const [email, setEmail] = useState("");
@@ -97,10 +98,7 @@ export default function SignInPage() {
             Sign In
           </button>
           {isLoading && (
-            <div
-              className="font-extralight m-auto text-gray-500 spinner-border block"
-              style={{ width: 20, height: 20 }}
-            ></div>
+            <Loader/>
           )}
           <h3 className="text-center flex items-center underline underline-offset-1 text-fuchsia-800 hover:text-fuchsia-500">
             <Link

@@ -72,6 +72,7 @@ const orderSchema = new Schema(
     },
     deliveredOn: {
       type: Date,
+      
     },
   },
   { timestamps: true }
