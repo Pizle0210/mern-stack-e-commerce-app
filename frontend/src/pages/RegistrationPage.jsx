@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useRegisterMutation } from "../slices/usersApiSlice";
 import { useEffect, useState } from "react";
 import { setCredentials } from "../slices/authSlice";
+import Loader from "../components/Loader";
 
 export default function RegistrationPage() {
   const [email, setEmail] = useState("");
@@ -116,10 +117,7 @@ export default function RegistrationPage() {
             Register
           </button>
           {isLoading && (
-            <div
-              className="font-extralight m-auto text-gray-500 spinner-border block"
-              style={{ width: 20, height: 20 }}
-            ></div>
+            <Loader/>
           )}
           <h3 className="text-center flex items-center underline underline-offset-1 text-blue-800 hover:text-blue-500 ">
             <Link to={redirect ? `/login?redirect=${redirect}` : "/login"}>

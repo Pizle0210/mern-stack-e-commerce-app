@@ -1,11 +1,9 @@
 import asyncHandler from "../middleware/asyncHandler.js";
 import Product from "../models/productModel.js";
 
- 
-
 /**
  * Retrieves all products from the database.
- * 
+ *
  * @param {object} req - The request object containing information about the HTTP request.
  * @param {object} res - The response object used to send the HTTP response.
  * @returns {Promise<Array>} - An array of products retrieved from the database, returned as a JSON response with a status code of 200.
@@ -14,9 +12,6 @@ const getProducts = asyncHandler(async (req, res) => {
   const product = await Product.find({});
   res.status(200).json(product);
 });
-
-
-
 
 /**
  * Retrieves a product by its ID from the database and sends a JSON response.
@@ -40,5 +35,76 @@ const getProductById = asyncHandler(async (req, res) => {
   }
 });
 
+/**
+ * Creates a new product and saves it to the database.
+ * @param {Object} req - The request object containing information about the HTTP request.
+ * @param {Object} res - The response object used to send a response back to the client.
+ * @returns {Promise<void>} - A promise that resolves when the product is created and saved.
+ */
+const createProduct = async (req, res) => {
+  try {
+    const product = new Product({
+      name: "Product name",
+      user: req.user._id,
+      formerPrice: 0,
+      price: 0,
+      image: "/image/product.jpg",
+      brand: "Product brand",
+      category: "Product Category",
+      countInStock: 0,
+      numReviews: 0,
+      description: "Product description",
+      rating: 0,
+    });
 
-export {getProducts,getProductById};
+    const createdProduct = await product.save();
+    res.status(201).json(createdProduct);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to create product" });
+  }
+};
+
+/**
+ * Updates a product in the database.
+ * @param {Object} req - The request object containing the product ID and updated data.
+ * @param {Object} res - The response object used to send the updated product as a JSON response.
+ * @returns {Object} - The updated product object.
+ */
+const updateProducts = asyncHandler(async (req, res) => {
+  const {
+    name,
+    brand,
+    image,
+    description,
+    category,
+    formerPrice,
+    price,
+    countInStock,
+    rating,
+    numReviews,
+  } = req.body;
+  const product = await Product.findById(req.params.id);
+
+  if (product) {
+    product.name = name;
+    product.price = price;
+    product.brand = brand;
+    product.image = image;
+    product.description = description;
+    product.category = category;
+    product.formerPrice = formerPrice;
+    product.countInStock = countInStock;
+    product.rating = rating;
+    product.numReviews = numReviews;
+
+    const updatedProduct = await product.save();
+    res.json(updatedProduct)
+  } else {
+    // Handle case when product does not exist
+    res.status(400).json('Product was not found')
+  }
+
+  return product;
+});
+
+export { getProducts, getProductById, createProduct,updateProducts };

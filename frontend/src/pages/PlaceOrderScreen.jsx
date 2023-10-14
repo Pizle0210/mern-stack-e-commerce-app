@@ -12,7 +12,7 @@ export default function PlaceOrderScreen() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
-  const [createOrder, { error }] = useCreateOrderMutation();
+  const [createOrder] = useCreateOrderMutation();
 
   useEffect(() => {
     if (!cart.shippingAddress.address) {
@@ -101,7 +101,7 @@ export default function PlaceOrderScreen() {
               <ListGroup.Item>
                 <Row>
                   <Col>Items:</Col>
-                  <Col>{cart.itemsPrice}:</Col>
+                  <Col>{cart.itemsPrice}</Col>
                 </Row>
               </ListGroup.Item>
               <ListGroup.Item>
@@ -124,11 +124,7 @@ export default function PlaceOrderScreen() {
                   </Col>
                 </Row>
               </ListGroup.Item>
-              <ListGroup.Item>
-                {error && (
-                  <Message className="alert alert-danger">{error}</Message>
-                )}
-              </ListGroup.Item>
+              
               <ListGroup.Item>
                 <button
                   className="px-2 p-2 bg-green-500 hover:bg-green-600 hover:shadow-inner shadow-lg transform transition-all ease-in-out duration-150 hover:scale-95 text-white font-bold"

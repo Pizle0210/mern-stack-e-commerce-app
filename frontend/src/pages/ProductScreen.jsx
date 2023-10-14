@@ -9,13 +9,13 @@ import {
   Image,
   Breadcrumb,
   Form,
-  Button,
 } from "react-bootstrap";
 import { Rating } from "../components/Rating";
 import Message from "../components/Message";
 import { useDispatch } from "react-redux";
 import { addToCart } from "../slices/cartSlice";
 import { useGetProductsDetailsQuery } from "../slices/productsApiSlice";
+import Loader from "../components/Loader";
 
 export const ProductScreen = () => {
   const { id: productId } = useParams();
@@ -38,10 +38,7 @@ export const ProductScreen = () => {
   return (
     <Container className="my-5 min-h-screen">
       {isLoading ? (
-        <div
-          className="font-extralight m-auto text-black spinner-border block"
-          style={{ width: 100, height: 100 }}
-        ></div>
+        <Loader/>
       ) : error ? (
         <Message variant="danger">{error?.data?.message}</Message>
       ) : !product ? (
@@ -137,7 +134,7 @@ export const ProductScreen = () => {
                               id="selectQty"
                               value={qty}
                               onChange={(e) => setQty(Number(e.target.value))}
-                              className="w-14 sm:w-16 h-9 my-1 text-black border-black focus:border-none rounded focus:ring-1 focus:ring-black"
+                              className="w-20 sm:w-20 h-9 my-1 text-black border-black focus:border-none rounded focus:ring-1 focus:ring-black"
                               required
                             >
                               {[...Array(product.countInStock).keys()].map(

@@ -2,6 +2,7 @@ import { Col, Row } from "react-bootstrap";
 import Product from "./Product";
 import Message from "./Message";
 import { useGetProductsQuery } from "../slices/productsApiSlice";
+import Loader from "./Loader";
 
 // Example after code:
 
@@ -11,10 +12,7 @@ export default function ProductItems() {
   return (
     <div className="">
       {isLoading ? (
-        <div
-          className="font-extralight m-auto text-black spinner-border block"
-          style={{ width: 100, height: 100 }}
-        ></div>
+        <Loader style={{height:70,width:70}}/>
       ) : error?.data?.message ? (
         <Message variant="danger">{error?.data?.message}</Message>
       ) : (

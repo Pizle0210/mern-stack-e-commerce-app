@@ -19,6 +19,11 @@ import PrivateRoute from "./components/PrivateRoute";
 import PaymentScreen from "./pages/PaymentScreen";
 import PlaceOrderScreen from "./pages/PlaceOrderScreen";
 import OrderScreen from "./pages/OrderScreen";
+import ProfilePage from "./pages/ProfilePage";
+import AdminRoute from "./components/AdminRoute";
+import OrderListScreen from "./pages/admin/OrderListScreen";
+import ProductsListPage from "./pages/admin/ProductsListPage";
+import CreateProduct from "./pages/admin/CreateProduct";
 
 function App() {
   const queryClient = new QueryClient({
@@ -48,6 +53,12 @@ function App() {
                 <Route path="/payment" element={<PaymentScreen />} />
                 <Route path="/placeorder" element={<PlaceOrderScreen />} />
                 <Route path="/order/:id" element={<OrderScreen />} />
+                <Route path="/profile" element={<ProfilePage />} />
+              </Route>
+              <Route path="" element={<AdminRoute />}>
+                <Route path="/admin/orderlist" element={<OrderListScreen/>}/>
+                <Route path="/admin/productlist" element={<ProductsListPage/>}/>
+                {/* <Route path="/admin/createproduct" element={<CreateProduct/>}/> */}
               </Route>
               <Route path="*" element={<Error404 />} />
             </Routes>

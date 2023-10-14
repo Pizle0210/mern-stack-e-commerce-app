@@ -29,10 +29,7 @@ const authenticateUser = asyncHandler(async (req, res) => {
   } else {
     throw new Error("Invalid email or password");
   }
-}); 
-
-
-
+});
 
 const registerUser = asyncHandler(async (req, res, next) => {
   const { name, email, password, isAdmin } = req.body;
@@ -72,7 +69,7 @@ const registerUser = asyncHandler(async (req, res, next) => {
       .status(500)
       .json({ error: "An error occurred. Please try again later." });
   }
-}); 
+});
 
 //?logout handler
 const logout = asyncHandler(async (req, res) => {
@@ -91,17 +88,21 @@ const getUserProfile = asyncHandler(async (req, res) => {
 const updateUserProfile = asyncHandler(async (req, res) => {
   const user = await User.findById(req.user._id);
   if (user) {
-    if (req.body.name && req.body.email) {
-      user.name = req.body.name;
-      user.email = req.body.email;
-    }
+    user.name = req.body.name || user.name;
+    user.email = req.body.email || user.email;
 
     if (req.body.password) {
       user.password = req.body.password;
     }
-
-    const updatedUser = User.save();
-    res.status(200).json({ message: ` profile updated successfully` });
+    const updatedUser = await user.save();
+    res
+      .status(200)
+      .json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+      });
   } else {
     res.status(200).json({ message: `User not found` });
   }

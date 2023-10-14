@@ -5,7 +5,9 @@ const getCartDataFromLocalStorage = () => {
   return localStorage.getItem("cart");
 };
 
-const initialState = getCartDataFromLocalStorage() ? JSON.parse(getCartDataFromLocalStorage()) : { cartItems: [], paymentMethod: "PayPal", shippingAddress: {} };
+const initialState = getCartDataFromLocalStorage()
+  ? JSON.parse(getCartDataFromLocalStorage())
+  : { cartItems: [], paymentMethod: "PayPal", shippingAddress: {} };
 
 const cartSlice = createSlice({
   name: "cart",

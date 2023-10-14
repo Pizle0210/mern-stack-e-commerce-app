@@ -8,43 +8,6 @@ import Order from "../models/orderModel.js";
  * @route POST /kampala/orders/
  * @access Private
  */
-//   const addOrders = asyncHandler(async (req, res) => {
-//     try {
-//       const {
-//         orderItems,
-//         shippingAddress,
-//         paymentMethod,
-//         itemsPrice,
-//         taxPrice,
-//         shippingPrice,
-//         totalAmount,
-//       } = req.body;
-//       if (orderItems && orderItems.length === 0) {
-//         res.status(400).json({ message: "Order items cannot be empty" });
-//       } else {
-//         const order = new Order({
-//           orderItems: orderItems.map((x) => ({
-//             ...x,
-//             product: x._id,
-//             _id: undefined,
-//           })),
-//           user: req.user._id,
-//           shippingPrice,
-//           shippingAddress,
-//           paymentMethod,
-//           itemsPrice,
-//           taxPrice,
-//         totalAmount,
-//       });
-//       const createOrder = await order.save();
-//       resstatus(201).json(createOrder );
-//     }
-//   } catch (error) {
-//     logger.error(error);
-//     res.status(500).send("Failed to add order. Please try again later.");
-//   }
-// });
-
 const addOrders = asyncHandler(async (req, res) => {
   const {
     orderItems,
@@ -87,10 +50,14 @@ const addOrders = asyncHandler(async (req, res) => {
  */
 const getMyOrders = asyncHandler(async (req, res) => {
   try {
-    const order = Order.find({ user: req.user._id });
-    res.status(200).json({ order: order });
+    const orders = await Order.find({ user: req.user._id });
+    if (orders.length === 0) {
+      res.status(404).send("No orders found for the user");
+    } else {
+      res.status(200).json(orders);
+    }
   } catch (error) {
-    res.status(500).send("error occurred");
+    res.status(500).send(`Error occurred: ${error.message}`);
   }
 });
 
@@ -152,13 +119,30 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
  * @route PUT /kampala/orders/:id/deliver
  * @access Private/Admin
  */
-const updateOrderToDelivered = async (req, res) => {
+const updateOrderToDelivered = asyncHandler(async (req, res) => {
   try {
-    res.status(200).send("Ordered items delivered");
+    const order = await Order.findById(req.params.id);
+    if (order) {
+      const updatedOrder = await Order.findByIdAndUpdate(
+        req.params.id,
+        {
+          isDelivered: true,
+          deliveredOn: Date.now()
+        },
+        { new: true }
+      );
+      if (updatedOrder) {
+        res.status(200).json(updatedOrder);
+      } else {
+        res.status(404).send("Order not found");
+      }
+    } else {
+      res.status(404).send("Order not found");
+    }
   } catch (error) {
-    res.status(500).send("An error occurred......");
+    res.status(500).send(error.message);
   }
-};
+});
 
 /**
  * This function gets all orders.
@@ -167,7 +151,8 @@ const updateOrderToDelivered = async (req, res) => {
  */
 const getOrders = async (req, res) => {
   try {
-    res.status(200).send("Get all orders");
+    const orders =await Order.find({}).populate('user','id name')
+    res.status(200).json(orders);
   } catch (error) {
     res.status(500).send("An error occurred");
   }

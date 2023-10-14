@@ -1,4 +1,4 @@
-import { Container, Nav, Navbar } from "react-bootstrap";
+import { Container, Nav, NavDropdown, Navbar } from "react-bootstrap";
 import { FaShoppingCart, FaSignOutAlt, FaUser } from "react-icons/fa";
 import logo from "../assets/kampalalogo2.jpg";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,29 +6,28 @@ import { useDispatch, useSelector } from "react-redux";
 import { useLogoutMutation } from "../slices/usersApiSlice";
 import { clearCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
+import { LinkContainer } from "react-router-bootstrap";
 
 export default function Header() {
   const { cartItems } = useSelector((state) => state.cart);
   const { userInfo } = useSelector((state) => state.auth);
-  
 
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const [logoutCmd] = useLogoutMutation()
+  const [logoutCmd] = useLogoutMutation();
 
-
-  const handleLogout=async(e)=>{
+  const handleLogout = async (e) => {
     e.preventDefault();
     try {
       await logoutCmd();
-      dispatch(clearCredentials())
-      toast.success('Logout successful')
-      navigate('/login')
+      dispatch(clearCredentials());
+      toast.success("Logout successful");
+      navigate("/login");
     } catch (error) {
-      toast.error(error?.error)
+      toast.error(error?.error);
     }
-  }
+  };
 
   return (
     <header>
@@ -95,6 +94,19 @@ export default function Header() {
                   <FaUser color="white" />
                   Sign in
                 </Nav.Link>
+              )}
+              {userInfo && userInfo.isAdmin && (
+                <NavDropdown id="adminOnly" title='Admin'>
+                  <LinkContainer to='/admin/productlist'>
+                      <NavDropdown.Item>Products</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/admin/userlist'>
+                      <NavDropdown.Item>Users</NavDropdown.Item>
+                  </LinkContainer>
+                  <LinkContainer to='/admin/orderlist'>
+                      <NavDropdown.Item>Order</NavDropdown.Item>
+                  </LinkContainer>
+                </NavDropdown>
               )}
             </Nav>
           </Navbar.Collapse>
