@@ -9,8 +9,23 @@ import Product from "../models/productModel.js";
  * @returns {Promise<Array>} - An array of products retrieved from the database, returned as a JSON response with a status code of 200.
  */
 const getProducts = asyncHandler(async (req, res) => {
-  const product = await Product.find({});
-  res.status(200).json(product);
+  // pagination and search
+  const pageContent = 3;
+  const page = Number(req.query.pageNumber) || 1;
+
+  // search
+  const keyword = req.query.keyword
+    ? { name: { $regex: req.query.keyword, $options: "i" } }
+    : {};
+
+  const count = await Product.countDocuments({...keyword});
+
+  const products = await Product.find({...keyword})
+    .limit(pageContent)
+    .skip(pageContent * (page - 1));
+  res
+    .status(200)
+    .json({ products, page, pages: Math.ceil(count / pageContent) });
 });
 
 /**
@@ -44,13 +59,13 @@ const getProductById = asyncHandler(async (req, res) => {
 const createProduct = async (req, res) => {
   try {
     const product = new Product({
-      name: "Product name",
       user: req.user._id,
+      name: "Product name",
       formerPrice: 0,
       price: 0,
-      image: "/image/product.jpg",
-      brand: "Product brand",
-      category: "Product Category",
+      image: "/images/macbookair-silver.jpeg",
+      brand: "Apple",
+      category: "Electronics",
       countInStock: 0,
       numReviews: 0,
       description: "Product description",
@@ -98,13 +113,74 @@ const updateProducts = asyncHandler(async (req, res) => {
     product.numReviews = numReviews;
 
     const updatedProduct = await product.save();
-    res.json(updatedProduct)
+    res.json(updatedProduct);
   } else {
     // Handle case when product does not exist
-    res.status(400).json('Product was not found')
+    res.status(400).json("Product was not found");
   }
+});
+const deleteProducts = asyncHandler(async (req, res) => {
+  const product = await Product.findByIdAndDelete(req.params.id);
 
-  return product;
+  if (product) {
+    res.status(200).json("deleted");
+  } else {
+    res.json("could not delete product");
+  }
 });
 
-export { getProducts, getProductById, createProduct,updateProducts };
+const createReview = asyncHandler(async (req, res) => {
+  const { rating, comment } = req.body;
+  const product = await Product.findById(req.params.id);
+  if (product) {
+    const alreadyReviewed = product.reviews.find(
+      (review) => review.user.toString() === req.user._id.string()
+    );
+    if (alreadyReviewed) {
+      res.status(400).json({ error: "Product already reviewed" });
+    }
+
+    const review = {
+      name: req.user.name,
+      rating: Number(rating),
+      comment,
+      user: req.user._id,
+    };
+
+    product.reviews.push(review);
+    product.numReviews = product.reviews.length;
+    product.rating =
+      product.reviews.reduce((acc, review) => acc + review.rating, 0) /
+      product.reviews.length;
+
+    try {
+      await product.save();
+      res.status(201).json({ message: "Reviewed Successfully" });
+    } catch (error) {
+      res.status(500).json({ error: "Failed to save product" });
+    }
+  }
+});
+
+// Get top rated products
+//route: kampala/products/top
+const getTopRatedProducts = asyncHandler(async (req, res) => {
+  try {
+    const products = await Product.find({}).sort({rating:-1}).limit(4)
+      res.status(200).json(products)
+  } catch (error) {
+    res.status(500).json({ error: `Internal Server Error` });
+  }
+});
+
+
+
+export {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProducts,
+  deleteProducts,
+  createReview,
+  getTopRatedProducts
+};

@@ -7,7 +7,6 @@ import Loader from "../../components/Loader";
 
 export default function OrderListScreen() {
   const { data: orders, isLoading, error } = useGetOrdersQuery();
-  console.log(orders);
   return (
     <Container className="min-h-screen py-5">
       <h1 className="text-lg mb-3">Orders</h1>
@@ -46,12 +45,14 @@ export default function OrderListScreen() {
                   {order.deliveredOn ? (
                     order.deliveredOn.substring(0, 10)
                   ) : (
-                    <FaTimes color="red"/>
+                    <FaTimes color="red" />
                   )}
                 </td>
                 <td>
                   <LinkContainer to={`/order/${order._id}`}>
-                    <button className="px-2 p-1 shadow-md hover:scale-95 duration-150 transform transition-all rounded bg-blue-500 font-thin text-white">check</button>
+                    <button className="px-2 p-1 shadow-md hover:scale-95 duration-150 transform transition-all rounded bg-blue-500 font-thin text-white">
+                      check
+                    </button>
                   </LinkContainer>
                 </td>
               </tr>

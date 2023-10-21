@@ -76,7 +76,7 @@ export default function PlaceOrderScreen() {
                         <Col className="flex items-center">
                           <Link
                             className="underline hover:underline-offset-2"
-                            to={`/product/${item.product}`}
+                            to={`/product/${item._id}`}
                           >
                             {item.name}
                           </Link>

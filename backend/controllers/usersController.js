@@ -1,7 +1,6 @@
 import { deleteToken, generateToken } from "../utils/JWT.js";
 import asyncHandler from "../middleware/asyncHandler.js";
 import User from "../models/userModel.js";
-import colors from "colors";
 import user from "../data/users.js";
 
 const authenticateUser = asyncHandler(async (req, res) => {
@@ -95,33 +94,66 @@ const updateUserProfile = asyncHandler(async (req, res) => {
       user.password = req.body.password;
     }
     const updatedUser = await user.save();
-    res
-      .status(200)
-      .json({
-        _id: updatedUser._id,
-        name: updatedUser.name,
-        email: updatedUser.email,
-        isAdmin: updatedUser.isAdmin,
-      });
+    res.status(200).json({
+      _id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      isAdmin: updatedUser.isAdmin,
+    });
   } else {
     res.status(200).json({ message: `User not found` });
   }
 });
 
 const getUsers = asyncHandler(async (req, res) => {
-  res.json({ message: "get users" });
+  const users = await User.find({});
+  res.status(200).json(users);
 });
 
 const getUsersById = asyncHandler(async (req, res) => {
-  res.json({ message: "get users by Id" });
+  const user = await User.findById(req.params.id).select("-password");
+  !user ? res.status(404).json("user not found") : res.status(200).json(user);
 });
 
 const deleteUser = asyncHandler(async (req, res) => {
-  res.json({ message: "delete user" });
+  try {
+    const { id: userId } = req.params;
+    const user = await User.findByIdAndDelete({ _id: userId });
+    if (user) {
+      if (user.isAdmin) {
+        res.status(400).json({ message: "Cannot delete Admin" });
+      }
+      res.status(200).json({ message: "user deleted" });
+    } else {
+      res.status(404).json({ error: "user not found" });
+    }
+  } catch (error) {
+    res.status(500).json({ error: `error encountered, ${error}` });
+  }
 });
 
 const updateUser = asyncHandler(async (req, res) => {
-  res.json({ message: "update user" });
+  try {
+    const user = await User.findById(req.params.id);
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+      user.isAdmin = Boolean(req.body.isAdmin);
+      const updatedUser = await user.save();
+      res.status(200).json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        isAdmin: updatedUser.isAdmin,
+      });
+    } else {
+      res.status(400).json({ error: "user not updated" });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ error: "An error occurred. Please try again later." });
+  }
 });
 
 export {

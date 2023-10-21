@@ -7,6 +7,7 @@ import { useLogoutMutation } from "../slices/usersApiSlice";
 import { clearCredentials } from "../slices/authSlice";
 import { toast } from "react-toastify";
 import { LinkContainer } from "react-router-bootstrap";
+import SearchBox from "./SearchBox";
 
 export default function Header() {
   const { cartItems } = useSelector((state) => state.cart);
@@ -59,6 +60,7 @@ export default function Header() {
           />
           <Navbar.Collapse id="basic-navbar-nav" className="">
             <Nav className=" ms-auto  gap-2 md:gap-2  lg:gap-8 ">
+                <SearchBox />
               <Nav.Link as={Link} to="/cart" className="items-center flex">
                 <FaShoppingCart color="white" size={25} />
                 {cartItems.length > 0 ? (
@@ -96,7 +98,7 @@ export default function Header() {
                 </Nav.Link>
               )}
               {userInfo && userInfo.isAdmin && (
-                <NavDropdown id="adminOnly" title='Admin'>
+                <NavDropdown id="adminOnly" title='Admin' className="flex items-center">
                   <LinkContainer to='/admin/productlist'>
                       <NavDropdown.Item>Products</NavDropdown.Item>
                   </LinkContainer>

@@ -6,4 +6,5 @@ export const PRODUCTS_URL = "/kampala/products";
 export const USERS_URL = "/kampala/users";
 export const ORDERS_URL = "/kampala/orders";
 export const PAYPAL_URL = "/kampala/config/paypal";
+export const UPLOAD_URL= "/kampala/upload";
  

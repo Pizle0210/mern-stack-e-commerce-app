@@ -29,7 +29,7 @@ const productSchema = new Schema({
         type:String,
         required:true
     },
-    rewiews:[reviewSchema],
+    reviews:[reviewSchema],
     rating:{
         type:Number,
         required:true,

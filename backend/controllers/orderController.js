@@ -96,18 +96,18 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
   try {
     const order = await Order.findById(req.params.id);
     if (order) {
-      order.isPaid=true;
-      order.paidAt=Date.now();
-      order.paymentResult={
-        id:req.body.id,
-        status:req.body.status,
-        update_time:req.body.update_time,
-        email_address:req.body.payer.email_address,
+      order.isPaid = true;
+      order.paidAt = Date.now();
+      order.paymentResult = {
+        id: req.body.id,
+        status: req.body.status,
+        update_time: req.body.update_time,
+        email_address: req.body.payer.email_address,
       };
-      const updatedOrder= await order.save();
-      res.status(200).json(updatedOrder)
-    }else{
-      res.status(400).json(`error with payment`)
+      const updatedOrder = await order.save();
+      res.status(200).json(updatedOrder);
+    } else {
+      res.status(400).json(`error with payment`);
     }
   } catch (error) {
     res.status(500).send("error occurred");
@@ -119,29 +119,17 @@ const updateOrderToPaid = asyncHandler(async (req, res) => {
  * @route PUT /kampala/orders/:id/deliver
  * @access Private/Admin
  */
+
 const updateOrderToDelivered = asyncHandler(async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id);
+  const order = await Order.findByIdAndUpdate(req.params.id);
     if (order) {
-      const updatedOrder = await Order.findByIdAndUpdate(
-        req.params.id,
-        {
-          isDelivered: true,
-          deliveredOn: Date.now()
-        },
-        { new: true }
-      );
-      if (updatedOrder) {
-        res.status(200).json(updatedOrder);
-      } else {
-        res.status(404).send("Order not found");
-      }
+      order.isDelivered = true;
+      order.deliveredOn=Date.now()
+      const updatedOrder = await order.save();
+      res.status(200).json(updatedOrder);
     } else {
       res.status(404).send("Order not found");
-    }
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+    }  
 });
 
 /**
@@ -151,7 +139,7 @@ const updateOrderToDelivered = asyncHandler(async (req, res) => {
  */
 const getOrders = async (req, res) => {
   try {
-    const orders =await Order.find({}).populate('user','id name')
+    const orders = await Order.find({}).populate("user", "id name");
     res.status(200).json(orders);
   } catch (error) {
     res.status(500).send("An error occurred");

@@ -1,12 +1,5 @@
 import { useEffect } from "react";
-import {
-  Card,
-  Col,
-  Container,
-  Image,
-  ListGroup,
-  Row,
-} from "react-bootstrap";
+import { Card, Col, Container, Image, ListGroup, Row } from "react-bootstrap";
 import { PayPalButtons, usePayPalScriptReducer } from "@paypal/react-paypal-js";
 import Message from "../components/Message";
 import { Link, useParams } from "react-router-dom";
@@ -76,16 +69,6 @@ export default function OrderScreen() {
     });
   }
 
-  async function onApproveTest() {
-    try {
-      await payOrder({ orderId, details: { payer: {} } });
-      refetch();
-      toast.success(`Payment Successful`);
-    } catch (error) {
-      toast.error("error encountered");
-    }
-  }
-
   function onError(err) {
     toast.error(err.message);
   }
@@ -108,14 +91,9 @@ export default function OrderScreen() {
 
   const deliveredHandler = async () => {
     try {
-      if (orderId) {
         await deliverOrder(orderId);
-        const result = await refetch();
-        if (result.error && result.error.message) {
-          throw new Error(result.error.message);
-        }
+        refetch()
         toast.success("Order Delivered");
-      }
     } catch (error) {
       toast.error(error?.data?.message || "An error occurred.");
     }
@@ -124,7 +102,7 @@ export default function OrderScreen() {
   return (
     <Container className="min-h-screen py-5">
       {isLoading ? (
-        <Loader/>
+        <Loader />
       ) : error?.data?.message ? (
         <Message variant="danger">{error?.data?.message}</Message>
       ) : (
@@ -153,7 +131,7 @@ export default function OrderScreen() {
                   </p>
                   {order.isDelivered ? (
                     <Message className="alart alert-success">
-                      Delivered on {order.deliveredOn}
+                      Delivered on {order.deliveredOn.substring(0,10)}
                     </Message>
                   ) : (
                     <Message className="alert alert-danger bg-red-400">
@@ -189,12 +167,10 @@ export default function OrderScreen() {
                         <Col md={2}>
                           <Image src={item.image} alt={item.name} />
                         </Col>
-                        <Col md={2}>
-                          <Link to={`/product/${item._id}`}>
-                            {item.name}
-                          </Link>
+                        <Col md={4}>
+                          <Link to={`/product/${item._id}`}>{item.name}</Link>
                         </Col>
-                        <Col md={4} className="font-bold">
+                        <Col md={6} className="font-bold">
                           {item.qty} x {item.price} = ${item.qty * item.price}
                         </Col>
                       </Row>
@@ -231,19 +207,11 @@ export default function OrderScreen() {
 
                   {!order.isPaid && (
                     <ListGroup.Item>
-                      {loadingPay && (
-                        <Loader/>
-                      )}
+                      {loadingPay && <Loader />}
                       {isPending ? (
-                        <Loader/>
+                        <Loader />
                       ) : (
                         <div className=" space-y-2">
-                          {/* <button
-                            onClick={onApproveTest}
-                            className="px-2 p-2 bg-green-500 rounded text-white hover:bg-green-600"
-                          >
-                            Test Pay Order
-                          </button> */}
                           <div>
                             <PayPalButtons
                               createOrder={createOrder}
@@ -257,9 +225,7 @@ export default function OrderScreen() {
                   )}
 
                   {/* MARK AS DELIVERED PLACEHOLDER */}
-                  {loadingDeliver && (
-                    <Loader/>
-                  )}
+                  {loadingDeliver && <Loader />}
                   {userInfo &&
                     userInfo.isAdmin &&
                     order.isPaid &&

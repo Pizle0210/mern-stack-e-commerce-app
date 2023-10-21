@@ -8,6 +8,7 @@ import { setCredentials } from "../slices/authSlice";
 import { useGetMyOrdersQuery } from "../slices/ordersApiSlice";
 import { FaTimes } from "react-icons/fa";
 import Loader from "../components/Loader";
+import { LinkContainer } from "react-router-bootstrap";
 
 export default function ProfilePage() {
   const [name, setName] = useState("");
@@ -104,21 +105,19 @@ export default function ProfilePage() {
               className="px-2 p-2 rounded-sm mt-3 shadow  bg-orange-500 text-white font-medium transform transition-all hover:bg-orange-600 duration-150 ease-out hover:scale-95"
               type="submit"
             >
-              Update 
+              Update
             </button>
-            {loadingProfile && (
-              <Loader/>
-            )}
+            {loadingProfile && <Loader />}
           </Form>
         </Col>
         <Col md={9}>
           <h2 className="mb-2 text-2xl md:text-center font-bold">My Orders</h2>
           {isLoading ? (
-            <Loader/>
+            <Loader />
           ) : error ? (
             <Message className="alert alert-danger bg-red-300"></Message>
           ) : (
-            <Table striped hover responsive className="table-sm">
+            <Table striped hover responsive borderless className="table-sm">
               <thead>
                 <tr className="">
                   <th>ID</th>
@@ -149,11 +148,13 @@ export default function ProfilePage() {
                         <FaTimes color="red" />
                       )}
                     </td>
-                    {/* <LinkContainer to={`/order/${order._id}`}>
-                      <Button variant="light" className="btn-sm">
-                        Details
-                      </Button>
-                    </LinkContainer> */}
+                    <td>
+                      <LinkContainer to={`/order/${order._id}`}>
+                        <button className="px-2 p-1 shadow-md hover:scale-95 duration-150 transform transition-all rounded bg-blue-500 font-thin text-white">
+                          check
+                        </button>
+                      </LinkContainer>
+                    </td>
                   </tr>
                 ))}
               </tbody>

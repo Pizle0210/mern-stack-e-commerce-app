@@ -4,25 +4,44 @@ import { LinkContainer } from "react-router-bootstrap";
 import {
   useCreateProductMutation,
   useGetProductsQuery,
+  useDeleteProductMutation,
 } from "../../slices/productsApiSlice";
 import Message from "../../components/Message";
 import Loader from "../../components/Loader";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
+import { useParams } from "react-router-dom";
+import Paginate from "../../components/Paginate";
 
 export default function ProductsListPage() {
-  const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+  const {pageNumber} = useParams()
+  const { data, isLoading, error, refetch } = useGetProductsQuery({pageNumber});
 
   const { userInfo } = useSelector((state) => state.auth);
   const [createProduct, { isLoading: loadingNewProduct }] =
     useCreateProductMutation();
-  const deleteHandler = (id) => {
-    console.log(id, "delete");
+  const [deleteProduct, { isLoading: loadingDelete }] =
+    useDeleteProductMutation();
+
+  const deleteHandler = async (id) => {
+    if (
+      window.confirm(`This product will be deleted.Click "ok" to proceed`)
+    ) {
+      try {
+        await deleteProduct(id);
+        toast.success('Product deleted')
+        refetch();
+      } catch (error) {
+        toast.error("could not delete file");
+      }
+    }
   };
 
   const createProductHandler = async () => {
     if (
-      window.confirm(`${userInfo.name},A new product will be created. Do you want to proceed?`)
+      window.confirm(
+        `${userInfo.name},A new product will be created. Do you want to proceed?`
+      )
     ) {
       try {
         await createProduct();
@@ -49,6 +68,7 @@ export default function ProductsListPage() {
         </Col>
       </Row>
       {loadingNewProduct && <Loader />}
+      {loadingDelete && <Loader />}
       {isLoading ? (
         <Loader />
       ) : error ? (
@@ -66,15 +86,15 @@ export default function ProductsListPage() {
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {data.products.map((product) => (
               <tr key={product._id}>
-                <td>#{product._id}</td>
-                <td>{product.name}</td>
+                <td>#{product._id.substring(0, 15)}</td>
+                <td>{product.name.substring(0, 20)}</td>
                 <td>{product.category}</td>
                 <td>{product.brand}</td>
                 <td>${product.price}</td>
                 <td className="flex flex-col sm:flex-row sm:space-x-2 space-y-2 sm:space-y-0">
-                  <LinkContainer to={`/admin/product/${product._id}`}>
+                  <LinkContainer to={`/admin/product/${product._id}/edit`}>
                     <button className="px-2 p-1 shadow-md hover:scale-95 duration-150 transform transition-all rounded bg-yellow-300">
                       <FaEdit />
                     </button>
@@ -93,6 +113,7 @@ export default function ProductsListPage() {
           </tbody>
         </Table>
       )}
+      <Paginate pages={data.pages} page={data.page} isAdmin={true} />
     </Container>
   );
 }
