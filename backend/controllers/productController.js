@@ -10,7 +10,7 @@ import Product from "../models/productModel.js";
  */
 const getProducts = asyncHandler(async (req, res) => {
   // pagination and search
-  const pageContent = 3;
+  const pageContent = process.env.PAGINATION_LIMIT;
   const page = Number(req.query.pageNumber) || 1;
 
   // search
