@@ -6,7 +6,6 @@ import Loader from "./Loader";
 import { Link, useParams } from "react-router-dom";
 import Paginate from "./Paginate";
 import ProductCarousel from "./ProductCarousel";
-import Titles from "./Titles";
 
 // Example after code:
 
@@ -54,6 +53,7 @@ export default function ProductItems() {
             pages={data.pages}
             page={data.page}
             keyword={keyword ? keyword : ""}
+            isAdmin={false}
           />
         </>
       )}

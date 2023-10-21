@@ -29,9 +29,9 @@ import { HelmetProvider } from "react-helmet-async";
 function App() {
   return (
     <>
-      <PayPalScriptProvider deferLoading={false}>
-        <HelmetProvider>
-          <Provider store={store}>
+      <HelmetProvider>
+        <Provider store={store}>
+          <PayPalScriptProvider deferLoading={false}>
             <Header />
             <Routes>
               <Route index={true} path="/" element={<Home />} />
@@ -79,9 +79,9 @@ function App() {
             </Routes>
             <Footer />
             <ToastContainer />
-          </Provider>
-        </HelmetProvider>
-      </PayPalScriptProvider>
+          </PayPalScriptProvider>
+        </Provider>
+      </HelmetProvider>
     </>
   );
 }
