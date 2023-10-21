@@ -260,10 +260,10 @@ export const ProductScreen = () => {
                     </Form>
                   ) : (
                     <Message className="alert alert-warning text-black rounded-none">
-                      Please
+                      Please 
                       <Link to="/login" className="underline">
                         sign in
-                      </Link>
+                      </Link> 
                       to write a review
                     </Message>
                   )}

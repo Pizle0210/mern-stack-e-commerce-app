@@ -35,18 +35,18 @@ const __dirname = path.resolve()
 app.use(helmet())
 app.use('/uploads',express.json({ limit: '5mb' }), express.static(path.resolve(__dirname, 'uploads')))
 
-if (process.env.NODE_ENV==='production') {
-  // set static folder
-  app.use(express.static(path.join(__dirname,'/frontend/dist')))
+// if (process.env.NODE_ENV==='production') {
+//   // set static folder
+//   app.use(express.static(path.join(__dirname,'/frontend/dist')))
 
-  app.get('*',(req,res)=>{
-    res.sendFile(path.resolve(__dirname,'frontend','dist','index.html'))
-  })
-}else{
-  app.get('/',(req,res)=>{
-    res.send('API is running......');
-  })
-}
+//   app.get('*',(req,res)=>{
+//     res.sendFile(path.resolve(__dirname,'frontend','dist','index.html'))
+//   })
+// }else{
+//   app.get('/',(req,res)=>{
+//     res.send('API is running......');
+//   })
+// }
 
 start(); //connect to database
 app.listen(port, () => {
